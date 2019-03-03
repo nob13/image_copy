@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "727bad3babdca75e0a4eec21fedfc94337facd9856fd9c693b00541169171abb"
+            "sha256": "418ff84151859bffaa6c9bf1f1cd1123ca5dda88efa9e0f181b0908d49f749af"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -23,6 +23,13 @@
             ],
             "index": "pypi",
             "version": "==2.1.2"
+        },
+        "pyexifinfo": {
+            "hashes": [
+                "sha256:578b34b3c593fe77bbe6b62588f9f2ec679dca63f7d486148c9a6ff1fdd4bdc9"
+            ],
+            "index": "pypi",
+            "version": "==0.4.0"
         }
     },
     "develop": {}
