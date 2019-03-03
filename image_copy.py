@@ -18,6 +18,8 @@ print("Output =   ", args.output)
 print("Simulate = ", args.s)
 print("Cache file=", args.cache_file)
 
+extensions = {'.jpg', '.jpeg', '.arw', '.mp4', '.avi'}
+
 touched_files = set()
 if args.cache_file is not None:
     try:
@@ -77,6 +79,11 @@ for root, dirs, files in os.walk(args.input):
         file = os.path.join(root, name)
         if file in touched_files:
             print(file, "Already in touched files")
+            continue
+
+        _, ext = os.path.splitext(file)
+        if ext.lower() not in extensions:
+            print(file, "skipped, not in valid extensions")
             continue
 
         file_date = get_file_date(file)
