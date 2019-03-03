@@ -96,7 +96,12 @@ for root, dirs, files in os.walk(args.input):
             if not args.s:
                 if not os.path.isdir(destination_dir):
                     os.makedirs(destination_dir)
-                shutil.copy2(file, destination_file)
+                try:
+                    shutil.copy2(file, destination_file)
+                except OSError as err:
+                    # Ignoring, this seems to work for me.
+                    if err.errno is not 95:
+                        raise err
                 add_to_cache(file)
 
 if cache_writer is not None:
