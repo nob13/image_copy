@@ -104,7 +104,7 @@ for root, dirs, files in os.walk(args.input):
         if args.dng:
             beginname, _ = os.path.splitext(os.path.basename(file))
             cand2 = os.path.join(destination_dir, beginname + ".dng")
-            print("Checking ", cand2)
+            # print("Checking ", cand2)
             if os.path.exists(cand2):
                 print("File ", file, " already exists as DNG, skipping")
                 add_to_cache(file)
