@@ -13,6 +13,7 @@ parser.add_argument('--cache', dest='cache_file', help='Touched file cache')
 parser.add_argument('-s', help='simulate', action='store_true')
 parser.add_argument('--ext', dest='ext', help='Extension filter (with dot!)')
 parser.add_argument('--dng', dest='dng', help='DNG Hack (Check for existing DNG and skip)', action='store_true')
+parser.add_argument('--overwrite', dest='overwrite', help='Overwrite content-mismatch files', action='store_true')
 args = parser.parse_args()
 print("Input  =         ", args.input)
 print("Output =         ", args.output)
@@ -20,6 +21,7 @@ print("Simulate =       ", args.s)
 print("Cache file=      ", args.cache_file)
 print("Extension filter=", args.ext)
 print("DNG Hack        =", args.dng)
+print("Overwrite       =", args.overwrite)
 
 extensions = {'.jpg', '.jpeg', '.arw', '.mp4', '.avi'}
 
@@ -78,6 +80,19 @@ def get_file_date(filename: str) -> datetime.date:
 def get_destination_dir(filename, file_date: datetime.date):
     return os.path.join(args.output, "{:04d}".format(file_date.year), "{:02d}".format(file_date.month))
 
+def copy_it(file, destination_dir, destination_file):
+    print("Copying", file, " --> ", destination_file)
+    if not args.s:
+        if not os.path.isdir(destination_dir):
+            os.makedirs(destination_dir)
+        try:
+            shutil.copy2(file, destination_file)
+        except OSError as err:
+            # Ignoring, this seems to work for me.
+            if err.errno is not 95:
+                raise err
+        add_to_cache(file)
+
 for root, dirs, files in os.walk(args.input):
     for name in files:
         file = os.path.join(root, name)
@@ -115,19 +130,11 @@ for root, dirs, files in os.walk(args.input):
                 print("File ", file, " already exists, same content")
                 add_to_cache(file)
             else:
-                print("File differs!!!!")
+                print("File ", file, " already exists but differs!!!")
+                if args.overwrite:
+                    copy_it(file, destination_dir, destination_file)
         else:
-            print("Copying", file, " --> ", destination_file)
-            if not args.s:
-                if not os.path.isdir(destination_dir):
-                    os.makedirs(destination_dir)
-                try:
-                    shutil.copy2(file, destination_file)
-                except OSError as err:
-                    # Ignoring, this seems to work for me.
-                    if err.errno is not 95:
-                        raise err
-                add_to_cache(file)
+            copy_it(file, destination_dir, destination_file)
 
 if cache_writer is not None:
     cache_writer.close()
