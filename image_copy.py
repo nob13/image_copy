@@ -52,7 +52,11 @@ def get_exif_creation_date(filename: str) -> datetime.date:
         tags = exifread.process_file(f, details=False)
         cand = tags.get("EXIF DateTimeOriginal", None)
         if cand is not None:
-            return datetime.datetime.strptime(cand.values, "%Y:%m:%d %H:%M:%S").date()
+            try:
+                return datetime.datetime.strptime(cand.values, "%Y:%m:%d %H:%M:%S").date()
+            except ValueError as r:
+                print("Warn: Could not parse file date", filename, cand, r)
+                return None
         return None
 
 
